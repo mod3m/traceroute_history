@@ -456,17 +456,44 @@ def execute(daemon=False):
             }
 
             # Immediate start
-            scheduler.add_job(update_traceroute_database, None, [], job_kwargs, name='startup-' + target_name,
-                              id='startup-' + target_name)
+            scheduler.add_job(
+                func=update_traceroute_database,
+                trigger='date',
+                args=[],
+                kwargs=job_kwargs,
+                name='startup-' + target_name,
+                timezone=UTC
+            )
             # Programmed start afterwards
-            scheduler.add_job(update_traceroute_database, 'interval', [], job_kwargs, seconds=interval,
-                              name=target_name, id=target_name)
+            scheduler.add_job(
+                func=update_traceroute_database,
+                trigger='interval',
+                args=[],
+                kwargs=job_kwargs,
+                seconds=interval,
+                name=target_name,
+                id=target_name
+            )
 
             if delete_history_days:
-                scheduler.add_job(delete_old_traceroutes, None, [], delete_kwargs,
-                                  name='startup-housekeeping-' + target_name, id='startup-housekeeping-' + target_name)
-                scheduler.add_job(delete_old_traceroutes, 'interval', [], delete_kwargs, hours=1,
-                                  name='housekeeping-' + target_name, id='housekeeping-' + target_name)
+                scheduler.add_job(
+                func=delete_old_traceroutes,
+                trigger=None,
+                args=[],
+                kwargs=delete_kwargs,
+                name='startup-housekeeping-' + target_name,
+                id='startup-housekeeping-' + target_name
+            )
+
+            scheduler.add_job(
+                func=delete_old_traceroutes,
+                trigger='interval',
+                args=[],
+                kwargs=delete_kwargs,
+                hours=1,
+                name='housekeeping-' + target_name,
+                id='housekeeping-' + target_name
+            )
 
             # TODO add regular config file reloading job ?
 
