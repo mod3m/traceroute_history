@@ -32,6 +32,7 @@ from decimal import Decimal
 from traceroute_history import config_management, trparse, schemas, models, crud
 from pydantic import ValidationError
 from traceroute_history.database import load_database, db_scoped_session
+from pytz import UTC
 
 # colorama is not mandatory
 try:
