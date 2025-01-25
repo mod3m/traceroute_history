@@ -32,7 +32,8 @@ class Traceroute(Base):
     creation_date = Column(DateTime(timezone=True), server_default=func.now())  # using func.now() guarantees UTC data
     raw_traceroute = Column(String(2048), nullable=False)
     target_id = Column(Integer, ForeignKey('target.id'))
-    target = relationship('Target')
+    #target = relationship('Target')
+    target = relationship('Target', back_populates='traceroutes')
 
     def __repr__(self):
         return 'Traceroute recorded at {0}:\n {1}'.format(self.creation_date, self.raw_traceroute)
@@ -65,7 +66,10 @@ class Target(Base):
     update_date = Column(DateTime(timezone=True), onupdate=func.now())
     name = Column(String(255), unique=True, nullable=False)
     address = Column(String(512), nullable=True)
-    traceroutes = relationship(Traceroute, backref='traceroutes')
+    #traceroutes = relationship(Traceroute, backref='traceroutes')
+    # Связь с Traceroute
+    traceroutes = relationship('Traceroute', back_populates='target')
+
     groups = relationship('Group', secondary=target_groups_association, back_populates='targets')
 
     def __repr__(self):
